@@ -12,6 +12,13 @@
     <string name="simple_register">Register</string>
     <string name="fullname">Full Name</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="shop_by_room">SHOP BY ROOM</string>
+    <string name="living_room">LIVING ROOM FURNITURE</string>
+    <string name="bed_room">BEDROOM FURNITURE</string>
+    <string name="office">OFFICE FURNITURE</string>
+    <string name="dining_room">DINING FURNITURE</string>
+    <string name="kitchen">KITCHEN FURNITURE</string>
+    <string name="home_decor">HOME DECOR ITEMS</string>
 
 
 </resources>

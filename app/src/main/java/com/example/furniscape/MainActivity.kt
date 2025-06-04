@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.furniscape.ui.component.BottomNavigationBar
 import com.example.furniscape.ui.component.FurniScapeAppBar
 import com.example.furniscape.ui.screen.HomeScreen
 import com.example.furniscape.ui.screen.LoginScreen
@@ -71,6 +72,11 @@ fun FurniScapeApp(){
             if (currentRoute !in noAppBarRoutes) {
                 FurniScapeAppBar()
             }
+        },
+        bottomBar = {
+            if (currentRoute in bottomNavItems.map {  it.route }) {
+                BottomNavigationBar(navController, bottomNavItems)
+            }
         }
 
 
@@ -81,7 +87,7 @@ fun FurniScapeApp(){
 //            modifier = Modifier.padding(innerPadding)
 //            modifier = Modifier.fillMaxSize()
         ) {
-            composable(FurniScape.Welcome.name){
+            composable(route = FurniScape.Welcome.name){
                 WelcomeScreen(
                     onGetStartedClicked = {
                         navController.navigate(FurniScape.Login.name)
@@ -90,7 +96,7 @@ fun FurniScapeApp(){
                 )
             }
 
-            composable(FurniScape.Login.name) {
+            composable(route = FurniScape.Login.name) {
                 LoginScreen(
                     onLoginClicked = {
                         navController.navigate(FurniScape.Home.name)
@@ -102,7 +108,7 @@ fun FurniScapeApp(){
                 )
             }
 
-            composable(FurniScape.Register.name){
+            composable(route = FurniScape.Register.name){
                 RegisterScreen(
                     onRegisterClicked = {
 //                        navigate back to login screen or home
@@ -115,7 +121,7 @@ fun FurniScapeApp(){
                 )
             }
 
-            composable(FurniScape.Home.name) {
+            composable(route = FurniScape.Home.name) {
                 //  For main screens, apply innerPadding
                 HomeScreen(
                     modifier = Modifier.padding(innerPadding)
@@ -149,4 +155,10 @@ enum class FurniScape {
     Home
 }
 
+val bottomNavItems = listOf(
+    BottomNavItem.Home,
+    BottomNavItem.Explore,
+    BottomNavItem.Cart,
+    BottomNavItem.User
+)
 

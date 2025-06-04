@@ -5,7 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -22,12 +26,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.furniscape.R
+import com.example.furniscape.data.DataSource
+import com.example.furniscape.model.RoomCategory
 
 @Composable
 fun HomeScreen(
@@ -92,6 +101,7 @@ fun HomeScreen(
             )
 
         }
+
 //      Banner Image section
         Image(
             painter = painterResource(id = R.drawable.homeimg),
@@ -105,8 +115,64 @@ fun HomeScreen(
 
         )
 
+//        Category section
+
+        val roomCategories = DataSource().loadRoomCategories()
+        ShopByRoomSection(categories = roomCategories)
+
 
 
     }
 
+}
+
+
+//Function for Horizontal Scrollable list
+@Composable
+fun ShopByRoomSection(categories: List<RoomCategory>){
+    Column (modifier = Modifier.padding(16.dp)) {
+
+        Text (
+            text = stringResource(id = R.string.shop_by_room),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .padding(horizontal = 8.dp , vertical = 4.dp)
+        )
+
+        LazyRow (
+            modifier = Modifier.padding(top = 8.dp)
+        ){
+            items(categories) { category ->
+                RoomCategoryItem(category)
+            }
+        }
+
+    }
+}
+
+//Function for each category card
+@Composable
+fun RoomCategoryItem(category: RoomCategory) {
+    Column (
+        modifier = Modifier
+            .padding(end = 12.dp)
+            .width(120.dp)
+    ) {
+        Image (
+            painter = painterResource(id = category.imageResId),
+            contentDescription = stringResource(category.labelResId),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(100.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))  //rounded corners
+        )
+        Text(
+            text = stringResource(category.labelResId),
+            modifier = Modifier.padding(top = 4.dp),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+    }
 }

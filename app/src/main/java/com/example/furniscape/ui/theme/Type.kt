@@ -18,15 +18,35 @@ val Montserrat = FontFamily(
 )
 
 val Typography = Typography(
-    headlineLarge = TextStyle( // Welcome message
+    displayLarge = TextStyle( // App splash / tilte screen
+        fontFamily = Lustria,
+        fontWeight = FontWeight.Normal,
+        fontSize = 57.sp
+    ),
+    headlineLarge = TextStyle( // Welcome message -section titles
         fontFamily = Lustria,
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp
     ),
+    headlineMedium = TextStyle(  // Sub section titles
+        fontFamily = Lustria,
+        fontWeight = FontWeight.Normal,
+        fontSize = 28.sp
+    ),
+    headlineSmall = TextStyle(  //smaller Headings
+        fontFamily = Lustria,
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp
+    ),
     titleLarge = TextStyle( // Description text
         fontFamily = Montserrat,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp
+        fontSize = 22.sp
+    ),
+    titleMedium = TextStyle( // Card or section titles
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
     ),
     labelLarge = TextStyle( // Button text
         fontFamily = FontFamily.Default, // Uses Roboto

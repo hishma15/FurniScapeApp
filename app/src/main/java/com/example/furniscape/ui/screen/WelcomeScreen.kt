@@ -58,7 +58,7 @@ fun  WelcomeScreen(
         ) {
             Text(
                 text = stringResource(id = R.string.welcome_message),
-                style = MaterialTheme.typography.headlineLarge.copy(
+                style = MaterialTheme.typography.displayLarge.copy(
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
                 ),
@@ -70,9 +70,10 @@ fun  WelcomeScreen(
 
             Text(
                 text = stringResource(id = R.string.furniscape_desc),
-                style = MaterialTheme.typography.titleLarge.copy(
+                style = MaterialTheme.typography.headlineMedium.copy(
                     color = Color.Black
-                )
+                ),
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_large)))
