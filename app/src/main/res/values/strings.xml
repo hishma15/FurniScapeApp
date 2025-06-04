@@ -10,8 +10,10 @@
     <string name="password">Password</string>
     <string name="dont_have_account">Dont have an Account?</string>
     <string name="simple_register">Register</string>
+    <string name="phone_no">Phone Number</string>
     <string name="fullname">Full Name</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="agreed_to_terms">I agree to the Terms and Conditions</string>
     <string name="shop_by_room">SHOP BY ROOM</string>
     <string name="living_room">LIVING ROOM FURNITURE</string>
     <string name="bed_room">BEDROOM FURNITURE</string>
@@ -19,6 +21,10 @@
     <string name="dining_room">DINING FURNITURE</string>
     <string name="kitchen">KITCHEN FURNITURE</string>
     <string name="home_decor">HOME DECOR ITEMS</string>
+    <string name="featured_products">FEATURED PRODUCTS</string>
+    <string name="view_details">More</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="explore_products">Explore Products!</string>
 
 
 </resources>

@@ -19,6 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.furniscape.ui.component.BottomNavigationBar
 import com.example.furniscape.ui.component.FurniScapeAppBar
+import com.example.furniscape.ui.screen.ExploreScreen
 import com.example.furniscape.ui.screen.HomeScreen
 import com.example.furniscape.ui.screen.LoginScreen
 import com.example.furniscape.ui.screen.RegisterScreen
@@ -128,6 +129,13 @@ fun FurniScapeApp(){
                 )
             }
 
+            composable(route = FurniScape.Explore.name) {
+                //  For main screens, apply innerPadding
+                ExploreScreen(
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+
         }
     }
 }
@@ -152,7 +160,8 @@ enum class FurniScape {
     Welcome,
     Login,
     Register,
-    Home
+    Home,
+    Explore
 }
 
 val bottomNavItems = listOf(

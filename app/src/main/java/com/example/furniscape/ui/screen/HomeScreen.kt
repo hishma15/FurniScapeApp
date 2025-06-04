@@ -1,19 +1,31 @@
 package com.example.furniscape.ui.screen
 
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +48,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.furniscape.R
 import com.example.furniscape.data.DataSource
+import com.example.furniscape.data.sampleProducts
+import com.example.furniscape.model.Product
 import com.example.furniscape.model.RoomCategory
 
 @Composable
@@ -115,19 +129,28 @@ fun HomeScreen(
 
         )
 
-//        Category section
+//      Category section
 
         val roomCategories = DataSource().loadRoomCategories()
         ShopByRoomSection(categories = roomCategories)
 
+//      Featured Product Section
 
-
+        FeaturedProductsList(
+            products = sampleProducts,
+            onProductClick = { selectedProduct ->
+                //TODO: Naviagte to product details
+            },
+            onAddToCart = { product ->
+                //TODO: Handle add to cart logic
+            }
+        )
     }
 
 }
 
 
-//Function for Horizontal Scrollable list
+//Function for Horizontal Scrollable list -Category Section
 @Composable
 fun ShopByRoomSection(categories: List<RoomCategory>){
     Column (modifier = Modifier.padding(16.dp)) {
@@ -174,5 +197,116 @@ fun RoomCategoryItem(category: RoomCategory) {
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
+    }
+}
+
+//Function for Vertical Scrollable list - Products Section
+@Composable
+fun FeaturedProductsList(
+    products: List<Product>,
+    onProductClick: (Product) -> Unit,
+    onAddToCart: (Product) -> Unit
+) {
+    Column (modifier = Modifier.padding(16.dp)) {
+        Text (
+            text = stringResource(id = R.string.featured_products),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .padding(horizontal = 8.dp , vertical = 4.dp)
+        )
+
+        LazyRow (
+            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.padding_small))
+        ) {
+            items (products) { product ->
+                ProductCard(
+                    product = product,
+                    onViewDetails = {onProductClick(product)},
+                    onAddToCart = {onAddToCart(product)}
+                )
+            }
+        }
+    }
+}
+
+//Function for each product card
+@Composable
+fun ProductCard(
+    product: Product,
+    onViewDetails: () -> Unit,
+    onAddToCart: () -> Unit,
+    modifier:Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .padding(dimensionResource(id = R.dimen.padding_small))
+            .width(220.dp)
+            .wrapContentHeight(),
+        shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_medium)),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurface
+            )
+    ) {
+        Column (
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+        ) {
+            Image(
+                painter = painterResource(id = product.imageRes),
+                contentDescription = product.name,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(12.dp))
+            )
+
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_small)))
+
+            Text(
+                text = product.name,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Text (
+                text = "Rs. ${product.price}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_small)))
+
+            Row(
+                modifier = Modifier
+                   .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = onViewDetails
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.view_details),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Button (
+                    onClick = onAddToCart,
+                    modifier = Modifier
+                        .width(48.dp) // Set a fixed width
+                        .height(48.dp),
+                    contentPadding = PaddingValues(0.dp) // Remove inner padding
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = stringResource(id = R.string.add_to_cart),
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
+            }
+
+        }
     }
 }

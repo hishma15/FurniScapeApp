@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +14,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -52,9 +58,11 @@ fun RegisterScreen(
 //    Input persist and will reset every frame
     var fullname by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    val phoneNumber = remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }  // Hide password default
+    val agreedToTerms = remember { mutableStateOf(false) }
 
 //  Dart theme
     val isDarkTheme = isSystemInDarkTheme()
@@ -115,7 +123,18 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
 
-//                Password input field
+//                Phone Number input field - Number field
+                TextField(
+                    value = phoneNumber.value,
+                    onValueChange = { phoneNumber.value = it },
+                    label = { Text(text = stringResource(id = R.string.phone_no)) },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+//                Password input field (Secure input with visibility toggle)
                 TextField(
                     value = password,
                     onValueChange = {password = it},
@@ -125,14 +144,15 @@ fun RegisterScreen(
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
-                        val iconRes = if (passwordVisible) R.drawable.visibility else R.drawable.visibility_off
+//                        val iconRes = if (passwordVisible) R.drawable.visibility else R.drawable.visibility_off
                         val description = if (passwordVisible) "Hide Password" else "Show Password"
 
                         IconButton(onClick = { passwordVisible = !passwordVisible}) {
                             Icon(
-                                painter = painterResource(id = iconRes),
+//                                painter = painterResource(id = iconRes),
+                                imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                 contentDescription = description,
-                                tint = Color.Unspecified
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -150,18 +170,38 @@ fun RegisterScreen(
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
-                        val iconRes = if (passwordVisible) R.drawable.visibility else R.drawable.visibility_off
                         val description = if (passwordVisible) "Hide Password" else "Show Password"
 
                         IconButton(onClick = { passwordVisible = !passwordVisible}) {
                             Icon(
-                                painter = painterResource(id = iconRes),
+                                imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                 contentDescription = description,
-                                tint = Color.Unspecified
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
                 )
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(dimensionResource(id = R.dimen.padding_small))
+                ) {
+                    Checkbox(
+                        checked = agreedToTerms.value,
+                        onCheckedChange = {agreedToTerms.value = it }
+                    )
+
+                    Text(
+                        text = stringResource(id = R.string.agreed_to_terms),
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
 
@@ -178,6 +218,8 @@ fun RegisterScreen(
                 }
 
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
+
+
 
             }
         }
