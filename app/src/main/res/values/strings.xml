@@ -25,6 +25,9 @@
     <string name="view_details">More</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="explore_products">Explore Products!</string>
+    <string name="product_not_found">Product Not Found</string>
+    <string name="price">Price Rs. </string>
+    <string name="category">Category: </string>
 
 
 </resources>

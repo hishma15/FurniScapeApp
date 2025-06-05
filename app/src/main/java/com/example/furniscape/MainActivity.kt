@@ -13,15 +13,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.furniscape.ui.component.BottomNavigationBar
 import com.example.furniscape.ui.component.FurniScapeAppBar
 import com.example.furniscape.ui.screen.ExploreScreen
 import com.example.furniscape.ui.screen.HomeScreen
 import com.example.furniscape.ui.screen.LoginScreen
+import com.example.furniscape.ui.screen.ProductDetailScreen
 import com.example.furniscape.ui.screen.RegisterScreen
 import com.example.furniscape.ui.screen.WelcomeScreen
 import com.example.furniscape.ui.theme.FurniScapeTheme
@@ -64,7 +67,9 @@ fun FurniScapeApp(){
     val noAppBarRoutes = listOf(
         FurniScape.Login.name,
         FurniScape.Welcome.name,
-        FurniScape.Register.name
+        FurniScape.Register.name,
+        "productDetails/{productId}" // To remove FurniScapeAppBar. so the OtherAppBar will be visible
+//        "productDetails"   *************
     )
 
 //    To show appbar in screens
@@ -73,6 +78,11 @@ fun FurniScapeApp(){
             if (currentRoute !in noAppBarRoutes) {
                 FurniScapeAppBar()
             }
+//            **************************
+//            if (currentRoute != null &&
+//                noAppBarRoutes.none { currentRoute.startsWith(it.substringBefore("/{")) }) {
+//                FurniScapeAppBar()
+//            }
         },
         bottomBar = {
             if (currentRoute in bottomNavItems.map {  it.route }) {
@@ -132,7 +142,20 @@ fun FurniScapeApp(){
             composable(route = FurniScape.Explore.name) {
                 //  For main screens, apply innerPadding
                 ExploreScreen(
+                    navController = navController, // Navigate tot he product details screen
                     modifier = Modifier.padding(innerPadding)
+                )
+            }
+
+            composable(
+                route = "productDetails/{productId}",
+                arguments = listOf(navArgument("productId") {type = NavType.IntType})
+            ){
+                BackStackEntry ->
+                val productId = BackStackEntry.arguments?.getInt("productId")?: -1
+                ProductDetailScreen(
+                    productId = productId,
+                    onBackClick = {navController.popBackStack()}
                 )
             }
 

@@ -15,12 +15,14 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.furniscape.R
 import com.example.furniscape.data.sampleProducts
 import com.example.furniscape.model.Product
 
 @Composable
 fun ExploreScreen(
+    navController: NavController, //To navigate to product details screen
     modifier: Modifier = Modifier
 
     ) {
@@ -44,7 +46,9 @@ fun ExploreScreen(
             items(sampleProducts) { product ->
                 ProductCard(
                     product = product,
-                    onViewDetails = { /* TODO */ },
+                    onViewDetails = {
+                        navController.navigate("productDetails/${product.id}")
+                    },
                     onAddToCart = { /* TODO */ }
                 )
             }
