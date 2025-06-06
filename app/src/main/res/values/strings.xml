@@ -28,6 +28,14 @@
     <string name="product_not_found">Product Not Found</string>
     <string name="price">Price Rs. </string>
     <string name="category">Category: </string>
-
+    <string name="description">Description</string>
+    <string name="log_out">LOG OUT</string>
+    <string name="my_profile">My Profile</string>
+    <string name="profile_name">Hishma Hameed</string>
+    <string name="profile_email">hishma@gmail.com</string>
+    <string name="my_orders">My Orders</string>
+    <string name="wishlist">Wishlist</string>
+    <string name="change_password">Change Password</string>
+    <string name="settings">Settings</string>
 
 </resources>

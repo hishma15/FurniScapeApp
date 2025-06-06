@@ -11,5 +11,5 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val label:S
     object Home :BottomNavItem("Home", Icons.Default.Home, "Home")
     object Explore :BottomNavItem("Explore", Icons.Default.Explore, "Explore")
     object Cart :BottomNavItem("Cart", Icons.Default.ShoppingCart, "Cart")
-    object User :BottomNavItem("User", Icons.Default.Person, "User")
+    object Profile :BottomNavItem("Profile", Icons.Default.Person, "Profile")
 }

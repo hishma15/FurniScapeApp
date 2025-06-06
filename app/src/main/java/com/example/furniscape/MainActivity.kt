@@ -1,30 +1,42 @@
+@file:OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+
 package com.example.furniscape
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.furniscape.ui.NavigationType
 import com.example.furniscape.ui.component.BottomNavigationBar
 import com.example.furniscape.ui.component.FurniScapeAppBar
 import com.example.furniscape.ui.screen.ExploreScreen
 import com.example.furniscape.ui.screen.HomeScreen
 import com.example.furniscape.ui.screen.LoginScreen
 import com.example.furniscape.ui.screen.ProductDetailScreen
+import com.example.furniscape.ui.screen.ProfileScreen
 import com.example.furniscape.ui.screen.RegisterScreen
 import com.example.furniscape.ui.screen.WelcomeScreen
 import com.example.furniscape.ui.theme.FurniScapeTheme
@@ -35,7 +47,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FurniScapeTheme {
-                FurniScapeApp()
+                val windowSize = calculateWindowSizeClass(this)
+                FurniScapeApp(windowSize = windowSize.widthSizeClass)
             }
         }
     }
@@ -48,8 +61,9 @@ class MainActivity : ComponentActivity() {
 //    )
 //}
 
+//@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun FurniScapeApp(){
+fun FurniScapeApp(windowSize: WindowWidthSizeClass){
 //    WelcomeScreen(
 //        onGetStartedClicked = { }
 //    )
@@ -72,6 +86,15 @@ fun FurniScapeApp(){
 //        "productDetails"   *************
     )
 
+    val navigationType = when (windowSize) {
+        WindowWidthSizeClass.Compact -> NavigationType.BOTTOM_NAVIGATION
+        WindowWidthSizeClass.Medium -> NavigationType.NAVIGATION_RAIL
+        WindowWidthSizeClass.Expanded -> NavigationType.NAVIGATION_RAIL
+        else -> NavigationType.PERMANENT_NAVIGATION_DRAWER
+
+
+    }
+
 //    To show appbar in screens
     Scaffold (
         topBar = {
@@ -85,81 +108,122 @@ fun FurniScapeApp(){
 //            }
         },
         bottomBar = {
-            if (currentRoute in bottomNavItems.map {  it.route }) {
+            if (currentRoute in bottomNavItems.map {  it.route } && navigationType == NavigationType.BOTTOM_NAVIGATION ) {
                 BottomNavigationBar(navController, bottomNavItems)
             }
         }
 
 
     ){ innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = FurniScape.Welcome.name,
+
+        Row {
+
+
+            // show NavigationRail if in medium/expanded size
+            // Adding top padding too Navigation Rail
+            if (
+                navigationType == NavigationType.NAVIGATION_RAIL &&
+                currentRoute in bottomNavItems.map { it.route }
+            ) {
+                FurniScapeNavRail(
+                    navController = navController,
+                    items = bottomNavItems,
+                    modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+                )
+            }
+
+//            // show NavigationRail if in medium/expanded size
+//            if (navigationType == NavigationType.NAVIGATION_RAIL && currentRoute in bottomNavItems.map {it.route}) {
+//                FurniScapeNavRail(navController, bottomNavItems)
+//            }
+
+            //main navigation content
+            NavHost(
+                navController = navController,
+                startDestination = FurniScape.Welcome.name,
 //            modifier = Modifier.padding(innerPadding)
 //            modifier = Modifier.fillMaxSize()
-        ) {
-            composable(route = FurniScape.Welcome.name){
-                WelcomeScreen(
-                    onGetStartedClicked = {
-                        navController.navigate(FurniScape.Login.name)
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+            ) {
+                composable(route = FurniScape.Welcome.name){
+                    WelcomeScreen(
+                        onGetStartedClicked = {
+                            navController.navigate(FurniScape.Login.name)
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
-            composable(route = FurniScape.Login.name) {
-                LoginScreen(
-                    onLoginClicked = {
-                        navController.navigate(FurniScape.Home.name)
-                    },
-                    onRegisterClicked = {
-                        navController.navigate(FurniScape.Register.name)
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+                composable(route = FurniScape.Login.name) {
+                    LoginScreen(
+                        onLoginClicked = {
+                            navController.navigate(FurniScape.Home.name)
+                        },
+                        onRegisterClicked = {
+                            navController.navigate(FurniScape.Register.name)
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
-            composable(route = FurniScape.Register.name){
-                RegisterScreen(
-                    onRegisterClicked = {
+                composable(route = FurniScape.Register.name){
+                    RegisterScreen(
+                        onRegisterClicked = {
 //                        navigate back to login screen or home
-                        navController.popBackStack()
-                    },
-                    onLoginClicked = {
-                        navController.navigate(FurniScape.Login.name)
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+                            navController.popBackStack()
+                        },
+                        onLoginClicked = {
+                            navController.navigate(FurniScape.Login.name)
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
-            composable(route = FurniScape.Home.name) {
-                //  For main screens, apply innerPadding
-                HomeScreen(
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
+                composable(route = FurniScape.Home.name) {
+                    //  For main screens, apply innerPadding
+                    HomeScreen(
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
 
-            composable(route = FurniScape.Explore.name) {
-                //  For main screens, apply innerPadding
-                ExploreScreen(
-                    navController = navController, // Navigate tot he product details screen
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
+                composable(route = FurniScape.Explore.name) {
+                    //  For main screens, apply innerPadding
+                    ExploreScreen(
+                        navController = navController, // Navigate tot he product details screen
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
 
-            composable(
-                route = "productDetails/{productId}",
-                arguments = listOf(navArgument("productId") {type = NavType.IntType})
-            ){
-                BackStackEntry ->
-                val productId = BackStackEntry.arguments?.getInt("productId")?: -1
-                ProductDetailScreen(
-                    productId = productId,
-                    onBackClick = {navController.popBackStack()}
-                )
+                composable(
+                    route = "productDetails/{productId}",
+                    arguments = listOf(navArgument("productId") {type = NavType.IntType})
+                ){
+                        BackStackEntry ->
+                    val productId = BackStackEntry.arguments?.getInt("productId")?: -1
+                    ProductDetailScreen(
+                        productId = productId,
+                        onBackClick = {navController.popBackStack()}
+                    )
+                }
+
+                composable(route = FurniScape.Profile.name) {
+                    //  For main screens, apply innerPadding
+                    ProfileScreen(
+                        onLogOutClick = {
+//                            Navigate to Login and clear backstack
+                            navController.navigate(FurniScape.Login.name) {
+                                popUpTo(0) { inclusive = true}
+                            }
+                        },
+                        windowWidthSizeClass = windowSize, // orientation change
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+
             }
 
         }
+
+
     }
 }
 
@@ -167,7 +231,7 @@ fun FurniScapeApp(){
 @Composable
 fun FurniScapeAppPreviewLight(){
     FurniScapeTheme() {
-        FurniScapeApp()
+        FurniScapeApp(windowSize = WindowWidthSizeClass.Compact)
     }
 }
 
@@ -175,7 +239,7 @@ fun FurniScapeAppPreviewLight(){
 @Composable
 fun FurniScapeAppPreviewDark(){
     FurniScapeTheme (darkTheme = true){
-        FurniScapeApp()
+        FurniScapeApp(windowSize = WindowWidthSizeClass.Compact)
     }
 }
 
@@ -184,13 +248,37 @@ enum class FurniScape {
     Login,
     Register,
     Home,
-    Explore
+    Explore,
+    Profile
 }
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
     BottomNavItem.Explore,
     BottomNavItem.Cart,
-    BottomNavItem.User
+    BottomNavItem.Profile
 )
+
+
+// ORIENTATION CHANGE
+@Composable
+fun FurniScapeNavRail(
+    navController: NavController,
+    items: List<BottomNavItem>,
+    modifier: Modifier = Modifier
+) {
+    NavigationRail(modifier = modifier) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        items.forEach{ item ->
+            NavigationRailItem(
+                selected = currentRoute == item.route,
+                onClick = { navController.navigate(item.route) },
+                icon = { Icon(item.icon, contentDescription = null) },
+                label = { Text(item.label) }
+            )
+        }
+    }
+}
 

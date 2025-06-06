@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +18,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.Close
@@ -59,92 +62,103 @@ fun HomeScreen(
 //    State to hold the current text of the search bar
     var searchText by remember { mutableStateOf("") }
 
-    Column (
-        modifier = modifier.fillMaxSize()
+//    Category
+    val roomCategories = DataSource().loadRoomCategories()
+
+    LazyColumn (
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentPadding = PaddingValues(bottom = 64.dp)  //allows bottom space for nav bar
     ){
 //        AppBar already exist above this composible
 
-        Column (
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primaryContainer)   //same as app bar
-                .padding(
-                    start = dimensionResource(id = R.dimen.padding_small),
-                    end = dimensionResource(id = R.dimen.padding_small),
-                    top = dimensionResource(id = R.dimen.padding_small),
-                    bottom = dimensionResource(id = R.dimen.padding_small)
-                )
-        ){
-            //        Search Bar container
-            TextField(
-                value = searchText,
-                onValueChange = {searchText = it},  //update state when user types
+        item {
+
+            Column (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        horizontal = dimensionResource(id = R.dimen.padding_medium),
-                        vertical = dimensionResource(id = R.dimen.padding_small)
-                    ),
-                placeholder = {Text(text = "Search Sofas, Beds, Decor Items...")},
-                singleLine = true,
-                shape = RoundedCornerShape(32.dp),
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                trailingIcon = {
-                    if (searchText.isNotEmpty()){
-                        IconButton(onClick = { searchText = "" }) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Clear Search",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                    .background(MaterialTheme.colorScheme.primaryContainer)   //same as app bar
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+            ){
+                //        Search Bar container
+                TextField(
+                    value = searchText,
+                    onValueChange = {searchText = it},  //update state when user types
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = dimensionResource(id = R.dimen.padding_medium),
+                            vertical = dimensionResource(id = R.dimen.padding_small)
+                        ),
+                    placeholder = {Text(text = "Search Sofas, Beds, Decor Items...")},
+                    singleLine = true,
+                    shape = RoundedCornerShape(32.dp),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    trailingIcon = {
+                        if (searchText.isNotEmpty()){
+                            IconButton(onClick = { searchText = "" }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Clear Search",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
-                    }
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    focusedIndicatorColor = Color.Transparent,  //Hide Underline
-                    unfocusedIndicatorColor = Color.Transparent, //Hide Underline
-                    cursorColor = MaterialTheme.colorScheme.primary
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        focusedIndicatorColor = Color.Transparent,  //Hide Underline
+                        unfocusedIndicatorColor = Color.Transparent, //Hide Underline
+                        cursorColor = MaterialTheme.colorScheme.primary
+                    )
                 )
-            )
+
+            }
 
         }
 
-//      Banner Image section
-        Image(
-            painter = painterResource(id = R.drawable.homeimg),
-            contentDescription = "Promotional Banner",
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = dimensionResource(id = R.dimen.padding_small)
-                ),
+        item {
+            //      Banner Image section
+            Image(
+                painter = painterResource(id = R.drawable.homeimg),
+                contentDescription = "Promotional Banner",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(8f / 3f)
+                    .padding(
+                        vertical = dimensionResource(id = R.dimen.padding_small)
+                    ),
+                )
 
-        )
+        }
 
-//      Category section
+        item {
+            //      Category section
+            ShopByRoomSection(categories = roomCategories)
+        }
 
-        val roomCategories = DataSource().loadRoomCategories()
-        ShopByRoomSection(categories = roomCategories)
+        item {
+            //      Featured Product Section
 
-//      Featured Product Section
+            FeaturedProductsList(
+                products = sampleProducts,
+                onProductClick = { selectedProduct ->
+                    //TODO: Naviagte to product details
+                },
+                onAddToCart = { product ->
+                    //TODO: Handle add to cart logic
+                }
+            )
+        }
 
-        FeaturedProductsList(
-            products = sampleProducts,
-            onProductClick = { selectedProduct ->
-                //TODO: Naviagte to product details
-            },
-            onAddToCart = { product ->
-                //TODO: Handle add to cart logic
-            }
-        )
     }
 
 }
@@ -200,14 +214,20 @@ fun RoomCategoryItem(category: RoomCategory) {
     }
 }
 
-//Function for Vertical Scrollable list - Products Section
+//Function for Scrollable list - Products Section
 @Composable
 fun FeaturedProductsList(
     products: List<Product>,
     onProductClick: (Product) -> Unit,
     onAddToCart: (Product) -> Unit
 ) {
-    Column (modifier = Modifier.padding(16.dp)) {
+
+//    val scrollState = rememberScrollState()
+
+    Column (modifier = Modifier
+        .padding(16.dp)
+//        .verticalScroll(scrollState) //scrollable manually
+    ) {
         Text (
             text = stringResource(id = R.string.featured_products),
             style = MaterialTheme.typography.headlineSmall,
@@ -215,6 +235,15 @@ fun FeaturedProductsList(
             modifier = Modifier
                 .padding(horizontal = 8.dp , vertical = 4.dp)
         )
+
+//        to make verticale scrollable list
+//        products.forEach { product ->
+//            ProductCard(
+//                product = product,
+//                onViewDetails = { onProductClick(product) },
+//                onAddToCart = { onAddToCart(product) }
+//            )
+//        }
 
         LazyRow (
             modifier = Modifier.padding(top = dimensionResource(id = R.dimen.padding_small))

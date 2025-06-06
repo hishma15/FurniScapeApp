@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -76,20 +78,24 @@ fun LoginScreen(
             modifier = Modifier.matchParentSize()
         )
 
+        //to make scrollable one for orientation change
+        val scrollState = rememberScrollState()
+
 //        Form Container - Box contains bottom half with rounded top corners
         Surface(
           color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f),
           shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f)
+//                .fillMaxHeight(0.5f)
                 .align(Alignment.BottomCenter)
             )
         {
             Column (
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.padding_large))
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
