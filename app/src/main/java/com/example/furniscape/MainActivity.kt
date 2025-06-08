@@ -6,6 +6,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -32,6 +38,7 @@ import androidx.navigation.navArgument
 import com.example.furniscape.ui.NavigationType
 import com.example.furniscape.ui.component.BottomNavigationBar
 import com.example.furniscape.ui.component.FurniScapeAppBar
+import com.example.furniscape.ui.screen.CartScreen
 import com.example.furniscape.ui.screen.ExploreScreen
 import com.example.furniscape.ui.screen.HomeScreen
 import com.example.furniscape.ui.screen.LoginScreen
@@ -82,8 +89,9 @@ fun FurniScapeApp(windowSize: WindowWidthSizeClass){
         FurniScape.Login.name,
         FurniScape.Welcome.name,
         FurniScape.Register.name,
-        "productDetails/{productId}" // To remove FurniScapeAppBar. so the OtherAppBar will be visible
+        "productDetails/{productId}", // To remove FurniScapeAppBar. so the OtherAppBar will be visible
 //        "productDetails"   *************
+        "explore/{categoryId}"
     )
 
     val navigationType = when (windowSize) {
@@ -107,11 +115,22 @@ fun FurniScapeApp(windowSize: WindowWidthSizeClass){
 //                FurniScapeAppBar()
 //            }
         },
+
         bottomBar = {
             if (currentRoute in bottomNavItems.map {  it.route } && navigationType == NavigationType.BOTTOM_NAVIGATION ) {
                 BottomNavigationBar(navController, bottomNavItems)
             }
         }
+
+//        bottomBar = {
+//            if (
+//                (currentRoute?.startsWith(FurniScape.Explore.name.lowercase()) == true ||
+//                        currentRoute in bottomNavItems.map { it.route }) &&
+//                navigationType == NavigationType.BOTTOM_NAVIGATION
+//            ) {
+//                BottomNavigationBar(navController, bottomNavItems)
+//            }
+//        }
 
 
     ){ innerPadding ->
@@ -143,7 +162,9 @@ fun FurniScapeApp(windowSize: WindowWidthSizeClass){
                 startDestination = FurniScape.Welcome.name,
 //            modifier = Modifier.padding(innerPadding)
 //            modifier = Modifier.fillMaxSize()
+
             ) {
+
                 composable(route = FurniScape.Welcome.name){
                     WelcomeScreen(
                         onGetStartedClicked = {
@@ -181,7 +202,8 @@ fun FurniScapeApp(windowSize: WindowWidthSizeClass){
                 composable(route = FurniScape.Home.name) {
                     //  For main screens, apply innerPadding
                     HomeScreen(
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        navController = navController
                     )
                 }
 
@@ -189,9 +211,24 @@ fun FurniScapeApp(windowSize: WindowWidthSizeClass){
                     //  For main screens, apply innerPadding
                     ExploreScreen(
                         navController = navController, // Navigate tot he product details screen
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        categoryFilter = "all"  //default for bottom nav
                     )
                 }
+
+                //passing according to selected category
+                composable(
+                    route = "explore/{categoryId}",
+                    arguments = listOf(navArgument("categoryId") { defaultValue = "all" })
+                ) { backStackEntry ->
+                    val categoryId = backStackEntry.arguments?.getString("categoryId") ?: "all"
+                    ExploreScreen(
+                        navController = navController,
+                        modifier = Modifier.padding(innerPadding),
+                        categoryFilter = categoryId
+                    )
+                }
+
 
                 composable(
                     route = "productDetails/{productId}",
@@ -201,7 +238,8 @@ fun FurniScapeApp(windowSize: WindowWidthSizeClass){
                     val productId = BackStackEntry.arguments?.getInt("productId")?: -1
                     ProductDetailScreen(
                         productId = productId,
-                        onBackClick = {navController.popBackStack()}
+                        onBackClick = {navController.popBackStack()},
+                        navController = navController
                     )
                 }
 
@@ -215,6 +253,14 @@ fun FurniScapeApp(windowSize: WindowWidthSizeClass){
                             }
                         },
                         windowWidthSizeClass = windowSize, // orientation change
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+
+                composable(route = FurniScape.Cart.name) {
+                    //  For main screens, apply innerPadding
+                    CartScreen(
+//                        navController = navController, // Navigate to the product details screen
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -249,7 +295,8 @@ enum class FurniScape {
     Register,
     Home,
     Explore,
-    Profile
+    Profile,
+    Cart
 }
 
 val bottomNavItems = listOf(

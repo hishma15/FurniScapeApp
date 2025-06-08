@@ -1,6 +1,8 @@
 package com.example.furniscape.ui.component
 
 import android.graphics.drawable.Icon
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -16,7 +18,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -68,13 +73,28 @@ fun FurniScapeAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtherScreenAppBar(
+    title: String = "", //category name visibility
+
     onBackClick: () ->Unit,
+
+    isLiked: Boolean, //animation //2
     onLikeClick: () ->Unit = {},
+
     onShareClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+
+    //--animation //2
+    val scale by animateFloatAsState(
+        targetValue = if (isLiked) 1.3f else 1f,
+        animationSpec = tween(200),
+        label = "LikeButtonScale"
+    )
+
     TopAppBar(
-        title = {},
+        title = {
+            Text (text = title)
+        },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
@@ -87,12 +107,21 @@ fun OtherScreenAppBar(
 
         },
         actions = {
-            IconButton(onClick = onLikeClick) {
+
+            //--aniamtion //2
+            IconButton(
+                onClick = onLikeClick,
+                modifier = Modifier.scale(scale)
+            ) {
                 Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = "Like"
+//                    imageVector = Icons.Default.FavoriteBorder,
+                    imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    contentDescription = "Like",
+                    tint = if (isLiked) Color.Red else MaterialTheme.colorScheme.onPrimary
                 )
             }
+
+
             IconButton(onClick = onShareClick) {
                 Icon(
                     imageVector = Icons.Default.Share,
