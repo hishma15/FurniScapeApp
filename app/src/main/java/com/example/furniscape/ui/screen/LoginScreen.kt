@@ -167,14 +167,14 @@ fun LoginScreen(
                     Text(
                         text = stringResource(id = R.string.dont_have_account),
 //                        color = MaterialTheme.colorScheme.primary
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
                         text = stringResource(id = R.string.simple_register),
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontWeight = FontWeight.Light),
 //                        color = MaterialTheme.colorScheme.primary
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
 

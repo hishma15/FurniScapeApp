@@ -2,6 +2,7 @@ package com.example.furniscape.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,7 +49,9 @@ fun CartScreen(
     modifier: Modifier = Modifier,
 
 ) {
-    val cartItems = sampleProducts.take(2)  //use 2 dummy items
+//    val cartItems = sampleProducts.take(2)  //use 2 dummy items
+
+    var cartItems by remember { mutableStateOf(sampleProducts.take(4).toMutableList()) }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Column (
@@ -67,7 +70,13 @@ fun CartScreen(
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
 
         cartItems.forEach{ product ->
-            CartItem(product = product)
+            CartItem(
+                product = product,
+
+                onDelete = {
+                    cartItems = cartItems.toMutableList().also { it.remove(product) }
+                }
+            )
             Spacer(modifier = Modifier.height(12.dp))
 
         }
@@ -102,7 +111,7 @@ fun CartScreen(
 
 //Cart items function
 @Composable
-fun CartItem(product: Product) {
+fun CartItem(product: Product, onDelete: () -> Unit) {
     var quantity by remember { mutableStateOf(1) }
 
     Row (
@@ -181,7 +190,9 @@ fun CartItem(product: Product) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
-                    modifier = Modifier.padding(end = 4.dp),
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .clickable{onDelete()},
                     tint = Color.Red
                 )
 

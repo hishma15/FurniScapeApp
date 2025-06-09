@@ -7,6 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -47,6 +51,7 @@ import com.example.furniscape.ui.screen.ProfileScreen
 import com.example.furniscape.ui.screen.RegisterScreen
 import com.example.furniscape.ui.screen.WelcomeScreen
 import com.example.furniscape.ui.theme.FurniScapeTheme
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +74,7 @@ class MainActivity : ComponentActivity() {
 //}
 
 //@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FurniScapeApp(windowSize: WindowWidthSizeClass){
 //    WelcomeScreen(
@@ -156,12 +162,77 @@ fun FurniScapeApp(windowSize: WindowWidthSizeClass){
 //                FurniScapeNavRail(navController, bottomNavItems)
 //            }
 
+            val bottomNavRoutes = listOf(
+                FurniScape.Home.name,
+                FurniScape.Explore.name,
+                FurniScape.Cart.name,
+                FurniScape.Profile.name
+            )
+
             //main navigation content
-            NavHost(
+//            NavHost(
+            AnimatedNavHost(
+
                 navController = navController,
                 startDestination = FurniScape.Welcome.name,
 //            modifier = Modifier.padding(innerPadding)
 //            modifier = Modifier.fillMaxSize()
+
+                enterTransition = {
+                    if (
+                        initialState.destination.route in bottomNavRoutes &&
+                        targetState.destination.route in bottomNavRoutes
+                    ) {
+                        slideInHorizontally(
+                            initialOffsetX = { it },
+                            animationSpec = tween(300)
+                        ) + fadeIn()
+                    } else {
+                        EnterTransition.None
+                    }
+                },
+
+                exitTransition = {
+                    if (
+                        initialState.destination.route in bottomNavRoutes &&
+                        targetState.destination.route in bottomNavRoutes
+                    ) {
+                        slideOutHorizontally(
+                            targetOffsetX = { -it },
+                            animationSpec = tween(300)
+                        ) + fadeOut()
+                    } else {
+                        ExitTransition.None
+                    }
+                },
+
+                popEnterTransition = {
+                    if (
+                        initialState.destination.route in bottomNavRoutes &&
+                        targetState.destination.route in bottomNavRoutes
+                    ) {
+                        slideInHorizontally(
+                            initialOffsetX = { -it },
+                            animationSpec = tween(300)
+                        ) + fadeIn()
+                    } else {
+                        EnterTransition.None
+                    }
+                },
+
+                popExitTransition = {
+                    if (
+                        initialState.destination.route in bottomNavRoutes &&
+                        targetState.destination.route in bottomNavRoutes
+                    ) {
+                        slideOutHorizontally(
+                            targetOffsetX = { it },
+                            animationSpec = tween(300)
+                        ) + fadeOut()
+                    } else {
+                        ExitTransition.None
+                    }
+                }
 
             ) {
 

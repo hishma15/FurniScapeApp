@@ -63,7 +63,7 @@ fun  WelcomeScreen(
     ) {
         Image (
             painter = painterResource(id = R.drawable.back),
-            contentDescription = null,
+            contentDescription = stringResource(R.string.welcome_background_desc),
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )

@@ -32,6 +32,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +55,9 @@ fun ProfileScreen(
 
     val isLandscapeOrWide = windowWidthSizeClass != WindowWidthSizeClass.Compact
     val scrollState = rememberScrollState()
+
+    //Logout confirmation dialog
+    val showDialog = remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -130,7 +135,8 @@ fun ProfileScreen(
 
         //Logout Button
         Button(
-            onClick = onLogOutClick,
+//            onClick = onLogOutClick,
+            onClick = { showDialog.value = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = dimensionResource(id = R.dimen.padding_small)),
@@ -141,6 +147,36 @@ fun ProfileScreen(
             )
         ) {
             Text(text = stringResource(id = R.string.log_out))
+        }
+
+        if (showDialog.value) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = {
+                    Text (text = stringResource(id = R.string.log_out))
+                },
+                text = {
+                    Text( text = stringResource(id = R.string.logout_confirmation))
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showDialog.value = false
+                            onLogOutClick()  //logout
+                        }
+                    ) {
+                        Text( text = stringResource(id = R.string.yes))
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {showDialog.value = false}
+                    ) {
+                        Text( text = stringResource(id = R.string.cancel))
+                    }
+                }
+
+            )
         }
 
 

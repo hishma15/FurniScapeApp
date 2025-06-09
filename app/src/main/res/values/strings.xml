@@ -43,5 +43,9 @@
     <string name="delivery_fee">Delivery Fee: </string>
     <string name="tax">Tax: </string>
     <string name="total">Total: </string>
+    <string name="welcome_background_desc">Background image showing stylish furniture</string>
+    <string name="logout_confirmation">Are you sure you want to log out?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

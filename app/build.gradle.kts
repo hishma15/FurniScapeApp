@@ -53,6 +53,7 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended:1.5.4")
     implementation("androidx.compose.material:material:1.5.4")
     implementation("androidx.compose.material3:material3-window-size-class")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.material3.window.size.class1.android)
     testImplementation(libs.junit)
